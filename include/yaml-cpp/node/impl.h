@@ -369,9 +369,8 @@ inline const Node Node::operator[](const Key& key) const {
   EnsureNodeExists();
   detail::node* value = static_cast<const detail::node&>(*m_pNode)
                             .get(detail::to_value(key), m_pMemory);
-  if (!value) {
-    return Node(ZombieNode);
-  }
+  if (!value || value->type() == NodeType::Undefined)
+    return GetValueFromMergeKey(key, value);
   return Node(*value, m_pMemory);
 }
 
@@ -381,7 +380,34 @@ inline Node Node::operator[](const Key& key) {
     throw InvalidNode();
   EnsureNodeExists();
   detail::node& value = m_pNode->get(detail::to_value(key), m_pMemory);
+  if (value.type() == NodeType::Undefined)
+    return GetValueFromMergeKey(key, &value);
   return Node(value, m_pMemory);
+}
+
+template <typename Key>
+inline Node Node::GetValueFromMergeKey(const Key& key,
+                                       detail::node* currentValue) const {
+  detail::node* mergeValue = static_cast<const detail::node&>(*m_pNode)
+                                 .get(detail::to_value("<<"), m_pMemory);
+  if (mergeValue && mergeValue->type() != NodeType::Undefined) {
+    Node mergeNode(*mergeValue, m_pMemory);
+    // Merge keys are used with maps and sequences of maps. Aliases may be used,
+    // but yaml-cpp resolves them automatically.
+    if (mergeNode.IsMap()) {
+      return mergeNode[key];
+    } else if (mergeNode.IsSequence()) {
+      for (const_iterator it = mergeNode.begin(); it != mergeNode.end(); ++it) {
+        if (it->IsMap() && (*it)[key]) {
+          return (*it)[key];
+        }
+      }
+    }
+  }
+  if (!currentValue) {
+    return Node(ZombieNode);
+  }
+  return Node(*currentValue, m_pMemory);
 }
 
 template <typename Key>
