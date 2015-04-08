@@ -126,9 +126,6 @@ class YAML_CPP_API Node {
   void AssignData(const Node& rhs);
   void AssignNode(const Node& rhs);
 
-  template <typename Key>
-  Node GetValueFromMergeKey(const Key& key, detail::node* currentValue) const;
-
  private:
   bool m_isValid;
   mutable detail::shared_memory_holder m_pMemory;
