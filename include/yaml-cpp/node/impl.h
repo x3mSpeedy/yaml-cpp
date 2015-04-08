@@ -369,8 +369,9 @@ inline const Node Node::operator[](const Key& key) const {
   EnsureNodeExists();
   detail::node* value = static_cast<const detail::node&>(*m_pNode)
                             .get(detail::to_value(key), m_pMemory);
-  if (!value || value->type() == NodeType::Undefined)
+  if (!value || value->type() == NodeType::Undefined) {
     return GetValueFromMergeKey(key, value);
+  }
   return Node(*value, m_pMemory);
 }
 
@@ -380,8 +381,9 @@ inline Node Node::operator[](const Key& key) {
     throw InvalidNode();
   EnsureNodeExists();
   detail::node& value = m_pNode->get(detail::to_value(key), m_pMemory);
-  if (value.type() == NodeType::Undefined)
+  if (value.type() == NodeType::Undefined) {
     return GetValueFromMergeKey(key, &value);
+  }
   return Node(value, m_pMemory);
 }
 
