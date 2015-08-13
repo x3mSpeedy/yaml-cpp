@@ -121,7 +121,7 @@ class node : private boost::noncopyable {
   inline node* GetValueFromMergeKey(const Key& key, node* currentValue,
                                     shared_memory_holder pMemory) const {
     node* mergeValue =
-        static_cast<const node_ref&>(*m_pRef).get(to_value("<<"), pMemory);
+        static_cast<const node_ref&>(*m_pRef).get(std::string("<<"), pMemory);
     if (mergeValue) {
       if (mergeValue->type() == NodeType::Map) {
         return &mergeValue->get(key, pMemory);
