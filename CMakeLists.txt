@@ -254,15 +254,19 @@ else()
 	set(_library_dir lib)
 endif()
 
+set(INSTALL_NAME yaml-cpp)
 set(INCLUDE_INSTALL_ROOT_DIR include)
 
-set(INCLUDE_INSTALL_DIR ${INCLUDE_INSTALL_ROOT_DIR}/yaml-cpp)
-set(LIB_INSTALL_DIR "${_library_dir}${LIB_SUFFIX}")
+# include install will be 	 /include/yaml-cpp
+set(INCLUDE_INSTALL_DIR 	"${INCLUDE_INSTALL_ROOT_DIR}/${INSTALL_NAME}")
+# lib install will be 	 	/lib/yaml-cpp
+# or 						/lib64/yaml-cpp
+set(LIB_INSTALL_DIR 		"${_library_dir}${LIB_SUFFIX}/${INSTALL_NAME}")
 
 set(_INSTALL_DESTINATIONS
 	RUNTIME DESTINATION bin
 	LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-	ARCHIVE DESTINATION "lib${LIB_SUFFIX}"
+	ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
 )
 
 
@@ -320,7 +324,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yaml-cpp-config-version.cmake.in
 if(UNIX)
 	set(PC_FILE ${CMAKE_BINARY_DIR}/yaml-cpp.pc)
 	configure_file("yaml-cpp.pc.cmake" ${PC_FILE} @ONLY)
-	install(FILES ${PC_FILE} DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+	install(FILES ${PC_FILE} DESTINATION "${_library_dir}${LIB_SUFFIX}/pkgconfig")
 endif()
 
 
@@ -338,3 +342,44 @@ add_custom_target(format
 	COMMAND clang-format --style=file -i ${all_sources}
 	COMMENT "Running clang-format"
 	VERBATIM)
+
+
+# CPack
+SET(CPACK_GENERATOR "DEB;TGZ;ZIP")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Jan Hybs") #required
+INCLUDE(CPack)
+
+
+message(STATUS "INCLUDE_INSTALL_DIR = ${INCLUDE_INSTALL_DIR}")
+# To use this:
+# make package
+# sudo dpkg -i YAML_CPP-0.1.1-Linux.deb
+ 
+# This will result in the file:
+#/usr/distance/DistanceBetweenPoints
+#
+
+find_path(YamlCpp_INCLUDE_DIR yaml-cpp/yaml.h
+          REQUIRED
+          PATH_SUFFIXES include
+          HINTS 
+              ${YamlCpp_ROOT_HINT}/include/
+          PATHS
+              /usr/local/include/
+              /usr/include/
+          )
+		
+# find the yaml-cpp library
+set(YamlCpp_STATIC libyaml-cpp.a)
+find_library(YamlCpp_LIBRARY
+           NAMES ${YamlCpp_STATIC} yaml-cpp
+           PATH_SUFFIXES lib64 lib
+           HINTS
+               /usr/lib/yaml-cpp
+           PATHS  
+              /usr/local
+              /usr
+           )
+
+message(STATUS "YamlCpp_INCLUDE_DIR = ${YamlCpp_INCLUDE_DIR}")
+message(STATUS "YamlCpp_LIBRARY = ${YamlCpp_LIBRARY}")
