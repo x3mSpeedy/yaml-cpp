@@ -15,4 +15,8 @@ build: cmake
 
 package: build
 	cd $(BUILD_TREE) && make package
+	# copy out packages
+	cp $(BUILD_TREE)/YAML_CPP_0.5.2.deb 	/var/www/html/packages/YAML_CPP_0.5.2.deb
+	cp $(BUILD_TREE)/YAML_CPP_0.5.2.tar.gz 	/var/www/html/packages/YAML_CPP_0.5.2.tar.gz
+	cp $(BUILD_TREE)/YAML_CPP_0.5.2.zip 	/var/www/html/packages/YAML_CPP_0.5.2.zip
 .PHONY : package
