@@ -1,6 +1,9 @@
 # Simple makefile for building and packaging projetc yaml-cpp
 
+# default location for building
 BUILD_TREE = build_tree
+# given by docker -v option
+PACKAGE_DIR = /packages
 
 cmake:
 	mkdir -p $(BUILD_TREE)
@@ -16,7 +19,7 @@ build: cmake
 package: build
 	cd $(BUILD_TREE) && make package
 	# copy out packages
-	cp $(BUILD_TREE)/YAML_CPP_0.5.2.deb 	/var/www/html/packages/YAML_CPP_0.5.2.deb
-	cp $(BUILD_TREE)/YAML_CPP_0.5.2.tar.gz 	/var/www/html/packages/YAML_CPP_0.5.2.tar.gz
-	cp $(BUILD_TREE)/YAML_CPP_0.5.2.zip 	/var/www/html/packages/YAML_CPP_0.5.2.zip
+	cp $(BUILD_TREE)/YAML_CPP_0.5.2.deb 	$(PACKAGE_DIR)/YAML_CPP_0.5.2.deb
+	cp $(BUILD_TREE)/YAML_CPP_0.5.2.tar.gz 	$(PACKAGE_DIR)/YAML_CPP_0.5.2.tar.gz
+	cp $(BUILD_TREE)/YAML_CPP_0.5.2.zip 	$(PACKAGE_DIR)/YAML_CPP_0.5.2.zip
 .PHONY : package
