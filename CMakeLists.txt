@@ -344,7 +344,8 @@ add_custom_target(format
 	VERBATIM)
 
 
-# CPack
+# CPack configuration 
+SET(CPACK_PACKAGE_FILE_NAME "YAML_CPP_${YAML_CPP_VERSION}")
 SET(CPACK_GENERATOR "DEB;TGZ;ZIP")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Jan Hybs") #required
 INCLUDE(CPack)
@@ -356,30 +357,4 @@ message(STATUS "INCLUDE_INSTALL_DIR = ${INCLUDE_INSTALL_DIR}")
 # sudo dpkg -i YAML_CPP-0.1.1-Linux.deb
  
 # This will result in the file:
-#/usr/distance/DistanceBetweenPoints
-#
-
-find_path(YamlCpp_INCLUDE_DIR yaml-cpp/yaml.h
-          REQUIRED
-          PATH_SUFFIXES include
-          HINTS 
-              ${YamlCpp_ROOT_HINT}/include/
-          PATHS
-              /usr/local/include/
-              /usr/include/
-          )
-		
-# find the yaml-cpp library
-set(YamlCpp_STATIC libyaml-cpp.a)
-find_library(YamlCpp_LIBRARY
-           NAMES ${YamlCpp_STATIC} yaml-cpp
-           PATH_SUFFIXES lib64 lib
-           HINTS
-               /usr/lib/yaml-cpp
-           PATHS  
-              /usr/local
-              /usr
-           )
-
-message(STATUS "YamlCpp_INCLUDE_DIR = ${YamlCpp_INCLUDE_DIR}")
-message(STATUS "YamlCpp_LIBRARY = ${YamlCpp_LIBRARY}")
+#/usr/yaml-cpp/
