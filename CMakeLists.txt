@@ -345,13 +345,13 @@ add_custom_target(format
 
 
 # CPack configuration 
+# SET(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
 SET(CPACK_PACKAGE_FILE_NAME "YAML_CPP_${YAML_CPP_VERSION}")
 SET(CPACK_GENERATOR "DEB;TGZ;ZIP")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Jan Hybs") #required
 INCLUDE(CPack)
 
 
-message(STATUS "INCLUDE_INSTALL_DIR = ${INCLUDE_INSTALL_DIR}")
 # To use this:
 # make package
 # sudo dpkg -i YAML_CPP-0.1.1-Linux.deb
